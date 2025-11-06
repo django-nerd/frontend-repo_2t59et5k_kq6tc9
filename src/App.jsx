@@ -1,6 +1,7 @@
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
+import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 
@@ -10,11 +11,13 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <ParallaxSeparator />
+        <ParallaxBand strength={20} tint="purple" />
         <About />
-        <ParallaxSeparator invert />
+        <ParallaxBand strength={30} tint="sky" invert />
+        <Experience />
+        <ParallaxBand strength={24} tint="purple" />
         <Projects />
-        <ParallaxSeparator />
+        <ParallaxBand strength={18} tint="sky" invert />
         <Contact />
         <Footer />
       </main>
@@ -22,15 +25,21 @@ export default function App() {
   );
 }
 
-function ParallaxSeparator({ invert = false }) {
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
+
+function ParallaxBand({ invert = false, strength = 24, tint = 'purple' }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const y = useTransform(scrollYProgress, [0, 1], [invert ? strength : -strength, invert ? -strength : strength]);
+
   return (
-    <div
-      className={`relative h-24 overflow-hidden ${invert ? 'bg-gradient-to-b' : 'bg-gradient-to-t'} from-black via-transparent to-black`}
-      aria-hidden
-    >
-      <div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.2),transparent_60%)] animate-pulse"
-        style={{ transform: 'translateZ(0)' }}
+    <div ref={ref} className="relative h-28 overflow-hidden bg-black" aria-hidden>
+      <motion.div
+        style={{ y }}
+        className={`absolute inset-0 opacity-60 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.18),transparent_60%)] ${
+          tint === 'sky' ? 'bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.18),transparent_60%)]' : ''
+        }`}
       />
     </div>
   );
