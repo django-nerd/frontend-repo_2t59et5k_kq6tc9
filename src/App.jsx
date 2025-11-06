@@ -11,13 +11,15 @@ export default function App() {
       <Navbar />
       <main>
         <Hero />
-        <ParallaxBand strength={20} tint="purple" />
+        <ParallaxBand strength={26} tint="purple" />
         <About />
-        <ParallaxBand strength={30} tint="sky" invert />
+        <ParallaxBand strength={34} tint="sky" invert />
         <Experience />
-        <ParallaxBand strength={24} tint="purple" />
+        <ParallaxBand strength={28} tint="purple" />
+        <TechOrbit />
+        <ParallaxBand strength={22} tint="sky" invert />
         <Projects />
-        <ParallaxBand strength={18} tint="sky" invert />
+        <ParallaxBand strength={18} tint="purple" />
         <Contact />
         <Footer />
       </main>
@@ -42,6 +44,35 @@ function ParallaxBand({ invert = false, strength = 24, tint = 'purple' }) {
         }`}
       />
     </div>
+  );
+}
+
+function TechOrbit() {
+  // A subtle 3D-inspired parallax ring of dots that orbits as you scroll
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
+
+  return (
+    <section ref={ref} className="relative py-16 bg-black overflow-hidden" aria-hidden>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative h-48">
+          <motion.div
+            style={{ rotate, scale }}
+            className="absolute inset-0 m-auto h-48 w-48 rounded-full"
+          >
+            {/* ring using multiple tiny dots */}
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1px)',
+              backgroundSize: '10px 10px',
+              maskImage: 'radial-gradient(circle, transparent 54px, black 56px, black 80px, transparent 82px)'
+            }} />
+          </motion.div>
+          <div className="pointer-events-none absolute inset-0 -z-0" />
+        </div>
+      </div>
+    </section>
   );
 }
 

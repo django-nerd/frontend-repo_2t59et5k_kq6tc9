@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
+import { useRef } from 'react';
 
 const projects = [
   {
@@ -23,11 +24,29 @@ const projects = [
 ];
 
 export default function Projects() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const yBack = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+  const yFront = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
   return (
-    <section id="projects" className="relative py-24 bg-gradient-to-b from-black to-black">
-      <div className="absolute inset-0 pointer-events-none opacity-40" aria-hidden>
-        <div className="mx-auto max-w-7xl h-full blur-3xl"/>
-      </div>
+    <section id="projects" ref={ref} className="relative py-24 bg-gradient-to-b from-black to-black overflow-hidden">
+      {/* Parallax background accents */}
+      <motion.div
+        aria-hidden
+        style={{ y: yBack }}
+        className="pointer-events-none absolute -top-20 -left-24 h-80 w-80 rounded-full blur-3xl"
+      >
+        <div className="h-full w-full rounded-full" style={{ background: 'radial-gradient(circle at 40% 40%, rgba(168,85,247,0.20), transparent 60%)' }} />
+      </motion.div>
+      <motion.div
+        aria-hidden
+        style={{ y: yFront }}
+        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl"
+      >
+        <div className="h-full w-full rounded-full" style={{ background: 'radial-gradient(circle at 60% 60%, rgba(56,189,248,0.22), transparent 60%)' }} />
+      </motion.div>
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-white">
         <div className="mb-10">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Featured Projects</h2>
@@ -35,7 +54,7 @@ export default function Projects() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((p, i) => (
+          {projects.map((p) => (
             <motion.a
               key={p.title}
               href={p.url}
